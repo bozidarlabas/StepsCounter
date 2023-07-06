@@ -21,19 +21,19 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageState extends State<HomePageWidget> {
   late Stream<StepCount> _stepCountStream;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
-  int stepsCount = 0;
+  String stepsCount = '';
 
   void initPlatformState() {
     _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
 
     _stepCountStream = Pedometer.stepCountStream;
+
     _stepCountStream.listen(onStepCount);
   }
 
   void onStepCount(StepCount event) {
-    stepsCount = event.steps;
     setState(() {
-      stepsCount = event.steps;
+      stepsCount = 'Broj koraka: ${event.steps} | date: ${event.timeStamp}';
     });
   }
 
@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePageWidget> {
         children: [
           buttonBuilder('start', onPressed: _startForegroundTask),
           buttonBuilder('stop', onPressed: _stopForegroundTask),
-          Text('Broj koraka: $stepsCount')
+          Text(stepsCount)
         ],
       ),
     );
