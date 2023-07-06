@@ -28,8 +28,6 @@ class MyTaskHandler extends TaskHandler {
 
     _stepCountStream = Pedometer.stepCountStream;
     _stepCountStream.listen(onStepCount).onError(onStepCountError);
-
-    // if (!mounted) return;bla
   }
 
   void onPedestrianStatusError(error) {

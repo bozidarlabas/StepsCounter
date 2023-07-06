@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:pedometer/pedometer.dart';
 import 'my_task_handler.dart';
 
 // The callback function should always be a top-level function.
@@ -18,7 +19,23 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePageWidget> {
-  // ReceivePort? _receivePort;
+  late Stream<StepCount> _stepCountStream;
+  late Stream<PedestrianStatus> _pedestrianStatusStream;
+  int stepsCount = 0;
+
+  void initPlatformState() {
+    _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
+
+    _stepCountStream = Pedometer.stepCountStream;
+    _stepCountStream.listen(onStepCount);
+  }
+
+  void onStepCount(StepCount event) {
+    stepsCount = event.steps;
+    setState(() {
+      stepsCount = event.steps;
+    });
+  }
 
   Future<void> _requestPermissionForAndroid() async {
     if (!Platform.isAndroid) {
@@ -119,6 +136,7 @@ class _HomePageState extends State<HomePageWidget> {
   @override
   void initState() {
     super.initState();
+    initPlatformState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _requestPermissionForAndroid();
       _initForegroundTask();
@@ -159,6 +177,7 @@ class _HomePageState extends State<HomePageWidget> {
         children: [
           buttonBuilder('start', onPressed: _startForegroundTask),
           buttonBuilder('stop', onPressed: _stopForegroundTask),
+          Text('Broj koraka: $stepsCount')
         ],
       ),
     );
